@@ -1,4 +1,6 @@
+// Import access to data
 import programRepository from "./programRepository";
+
 // Some data to make the trick
 
 const programs = [
@@ -24,7 +26,7 @@ const programs = [
   },
 ];
 
-// Declare the action
+// Declare the actions
 
 import type { RequestHandler } from "express";
 
@@ -46,6 +48,72 @@ const read: RequestHandler = (req, res) => {
   }
 };
 
-// Export it to import it somewhere else
+const edit: RequestHandler = async (req, res, next) => {
+  try {
+    // Update a specific category based on the provided ID
+    const program = {
+      id: Number(req.params.id),
+      title: req.body.title,
+      synopsis: req.body.synopsis,
+      poster: req.body.poster,
+      country: req.body.country,
+      year: req.body.year,
+      category_id: req.body.category_id,
+    };
 
-export default { browse, read };
+    const affectedRows = await programRepository.update(program);
+
+    // If the category is not found, respond with HTTP 404 (Not Found)
+    // Otherwise, respond with the category in JSON format
+    if (affectedRows === 0) {
+      res.sendStatus(404);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const add: RequestHandler = async (req, res, next) => {
+  try {
+    // Extract the category data from the request body
+    const newProgram = {
+      title: req.body.title,
+      synopsis: req.body.synopsis,
+      poster: req.body.poster,
+      country: req.body.country,
+      year: req.body.year,
+      category_id: req.body.category_id,
+    };
+
+    // Create the category
+    const insertId = await programRepository.create(newProgram);
+
+    // Respond with HTTP 201 (Created) and the ID of the newly inserted item
+    res.status(201).json({ insertId });
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const destroy: RequestHandler = async (req, res, next) => {
+  try {
+    // Delete a specific category based on the provided ID
+    const programId = Number(req.params.id);
+
+    await programRepository.delete(programId);
+
+    // Respond with HTTP 204 (No Content) anyway
+    res.sendStatus(204);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+// Export them to import them somewhere else
+
+export default { browse, read, edit, add, destroy };

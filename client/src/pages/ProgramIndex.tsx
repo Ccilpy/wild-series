@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Series from "../components/Series";
 
-export default function Programs() {
+export default function ProgramIndex() {
   const [series, setSeries] = useState([]);
   useEffect(() => {
     const getPrograms = () => {

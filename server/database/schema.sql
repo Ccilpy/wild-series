@@ -8,7 +8,8 @@ create table item (
   id int unsigned primary key auto_increment not null,
   title varchar(255) not null,
   user_id int unsigned not null,
-  foreign key(user_id) references user(id)
+  foreign key(user_id) references user(id),
+  ON DELETE CASCADE
 );
 
 insert into user(id, email, password)
@@ -20,20 +21,21 @@ values
   (1, "Stuff", 1),
   (2, "Doodads", 1);
 
-CREATE TABLE category (
-  id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-  name VARCHAR(255) NOT NULL
+create table category (
+  id int unsigned primary key auto_increment not null,
+  name varchar(255) not null unique
 );
 
-CREATE TABLE program (
-  id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-  title VARCHAR(255) NOT NULL,
-  synopsis TEXT NOT NULL,
-  poster VARCHAR(255) NOT NULL,
-  country VARCHAR(255) NOT NULL,
-  year INT UNSIGNED NOT NULL,
-  category_id INT UNSIGNED NOT NULL,
-  FOREIGN KEY (category_id) REFERENCES category(id)
+create table program (
+  id int unsigned primary key auto_increment not null,
+  title varchar(255) not null,
+  synopsis text not null,
+  poster varchar(255) not null,
+  country varchar(100) not null,
+  year int not null,
+  category_id int unsigned not null,
+  foreign key(category_id) references category(id),
+  ON DELETE CASCADE
 );
 
 insert into category(id, name)
